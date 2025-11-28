@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>✏️ Sửa sản phẩm</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #eef1f4;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      width: 100%;
+      height: 60px;
+      background: linear-gradient(135deg, #28a745, #2d7c4b);
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .navbar img {
+      width: 32px;
+    }
+
+    .navbar a {
+      margin-left: 20px;
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+    .navbar a:hover {
+      opacity: 0.7;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 240px;
+      background: white;
+      position: fixed;
+      top: 60px;
+      bottom: 0;
+      left: 0;
+      padding-top: 30px;
+      border-right: 1px solid #ddd;
+      box-shadow: 3px 0 12px rgba(0,0,0,0.08);
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      text-decoration: none;
+      color: #333;
+      font-size: 16px;
+      transition: 0.3s;
+      border-left: 4px solid transparent;
+    }
+
+    .sidebar img {
+      width: 22px;
+      opacity: 0.8;
+    }
+
+    .sidebar a:hover {
+      background: #e9f8ef;
+      color: #28a745;
+      border-left: 4px solid #28a745;
+      font-weight: bold;
+    }
+
+    /* CONTENT */
+    .content {
+      margin-left: 260px;
+      padding: 100px 40px;
+    }
+
+    .card {
+      width: 430px;
+      background: white;
+      padding: 30px;
+      margin: auto;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+      animation: fadeIn 0.4s ease;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2a7f3c;
+      font-size: 26px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    input {
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      border-color: #28a745;
+      box-shadow: 0 0 6px rgba(40,167,69,0.3);
+      outline: none;
+    }
+
+    button {
+      padding: 12px;
+      background: #0d6efd;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    button:hover {
+      background: #0a58ca;
+      box-shadow: 0 4px 12px rgba(13,110,253,0.3);
+    }
+
+    .back {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      color: #2a7f3c;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .back:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <div class="logo">
+      <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" />
+      Admin Dashboard
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <a href="/products">
+      <img src="https://cdn-icons-png.flaticon.com/512/992/992651.png" />
+      Danh sách sản phẩm
+    </a>
+    <a href="/add">
+      <img src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png" />
+      Thêm sản phẩm
+    </a>
+    <a href="/search">
+      <img src="https://cdn-icons-png.flaticon.com/512/622/622669.png" />
+      Tìm kiếm sản phẩm
+    </a>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="card">
+
+      <h1>✏️ Sửa sản phẩm</h1>
+
+      <form action="/edit/<%= product.id %>" method="POST">
+        <input type="text" name="name" value="<%= product.name %>" required />
+        <input type="number" step="0.01" name="price" value="<%= product.price %>" required />
+
+        <button type="submit">💾 Cập nhật sản phẩm</button>
+      </form>
+
+      <a href="/products" class="back">⬅️ Quay lại danh sách</a>
+
+    </div>
+  </div>
+
+</body>
+</html>

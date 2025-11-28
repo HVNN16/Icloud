@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard - Quản lý sản phẩm học tập</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #eef1f4;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      width: 100%;
+      height: 60px;
+      background: linear-gradient(135deg, #28a745, #2d7c4b);
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      font-size: 22px;
+      font-weight: bold;
+      gap: 10px;
+    }
+
+    .navbar img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .navbar-links a {
+      margin-left: 20px;
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    .navbar-links a:hover {
+      opacity: 0.8;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 240px;
+      background: white;
+      position: fixed;
+      top: 60px;
+      bottom: 0;
+      left: 0;
+      padding-top: 30px;
+      border-right: 1px solid #ddd;
+      box-shadow: 3px 0 12px rgba(0,0,0,0.08);
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      text-decoration: none;
+      color: #333;
+      font-size: 16px;
+      transition: 0.3s;
+      border-left: 4px solid transparent;
+    }
+
+    .sidebar img {
+      width: 22px;
+      opacity: 0.8;
+    }
+
+    .sidebar a:hover {
+      background: #e9f8ef;
+      color: #28a745;
+      border-left: 4px solid #28a745;
+      font-weight: bold;
+    }
+
+    /* CONTENT */
+    .content {
+      margin-left: 260px;
+      padding: 100px 40px;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      animation: fadeIn 0.4s ease;
+    }
+
+    .title {
+      font-size: 30px;
+      color: #2a7f3c;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-add {
+      padding: 12px 18px;
+      background: #28a745;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 10px;
+      font-weight: bold;
+      text-decoration: none;
+      margin-bottom: 20px;
+      transition: 0.3s;
+      font-size: 16px;
+    }
+
+    .btn-add:hover {
+      background: #1e7a33;
+      box-shadow: 0 4px 12px rgba(40,167,69,0.3);
+    }
+
+    /* TABLE */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    th {
+      background: #2a7f3c;
+      color: white;
+      padding: 14px;
+      font-size: 15px;
+    }
+
+    td {
+      padding: 14px;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      text-align: center;
+    }
+
+    tr:hover td {
+      background: #eaf7ef;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.3s;
+      text-decoration: none;
+      color: white !important;
+    }
+
+    .edit {
+      background: #0d6efd;
+    }
+    .edit:hover {
+      background: #0a58ca;
+    }
+
+    .delete {
+      background: #dc3545;
+    }
+    .delete:hover {
+      background: #bb2d3b;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <div class="logo">
+      <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" />
+      Admin Dashboard - Thiên Đường Cho Học Tập
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <a href="/products">
+      <img src="https://cdn-icons-png.flaticon.com/512/992/992651.png" />
+      Danh sách sản phẩm
+    </a>
+    <a href="/add">
+      <img src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png" />
+      Thêm sản phẩm
+    </a>
+    <a href="/search">
+      <img src="https://cdn-icons-png.flaticon.com/512/622/622669.png" />
+      Tìm kiếm sản phẩm
+    </a>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="content">
+    <div class="card">
+
+      <h2 class="title">📋 Danh sách sản phẩm</h2>
+
+      <a href="/add" class="btn-add">
+        <img src="https://cdn-icons-png.flaticon.com/512/992/992651.png" width="18" />
+        Thêm sản phẩm
+      </a>
+
+      <% if (products.length > 0) { %>
+
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Tên sản phẩm</th>
+          <th>Giá (VNĐ)</th>
+          <th>Thao tác</th>
+        </tr>
+
+        <% products.forEach(p => { %>
+        <tr>
+          <td><%= p.id %></td>
+          <td><%= p.name %></td>
+          <td><%= Number(p.price).toLocaleString("vi-VN") %></td>
+          <td>
+            <a class="btn edit" href="/edit/<%= p.id %>">
+              ✏️ Sửa
+            </a>
+
+            <form action="/delete/<%= p.id %>" method="POST" style="display:inline"
+              onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')">
+              <button class="btn delete">🗑️ Xóa</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+
+      </table>
+
+      <% } else { %>
+
+      <p style="text-align:center; color:#666;">⚠️ Chưa có sản phẩm nào.</p>
+
+      <% } %>
+
+    </div>
+  </div>
+
+</body>
+</html>
