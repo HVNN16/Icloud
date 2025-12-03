@@ -7,7 +7,18 @@ const pool = new Pool({
 });
 
 (async () => {
-  const result = await pool.query("SELECT * FROM products");
-  console.table(result.rows);
-  pool.end();
+  try {
+    console.log("===== 🟢 BẢNG PRODUCTS =====");
+    const products = await pool.query("SELECT * FROM products ORDER BY id ASC");
+    console.table(products.rows);
+
+    console.log("\n===== 🟢 BẢNG USERS =====");
+    const users = await pool.query("SELECT id, username, role FROM users ORDER BY id ASC");
+    console.table(users.rows);
+
+  } catch (err) {
+    console.error("❌ Lỗi truy vấn:", err);
+  } finally {
+    pool.end();
+  }
 })();
