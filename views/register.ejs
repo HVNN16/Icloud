@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Đăng ký</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial;
+    background: #e8f5e9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .box {
+    width: 400px;
+    background: white;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+  h2 {
+    text-align: center;
+    color: #2d7c4b;
+    margin-bottom: 20px;
+  }
+  input {
+    width: 90%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+  }
+    select {
+        width: 96%;
+        padding: 12px;
+        margin-top: 10px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+    }
+  button {
+    width: 96%;
+    padding: 12px;
+    margin-top: 20px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #1e7a33;
+  }
+  .bottom {
+    text-align: center;
+    margin-top: 15px;
+  }
+  a {
+    color: #2a7f3c;
+    text-decoration: none;
+    font-weight: bold;
+  }
+</style>
+
+</head>
+<body>
+
+<div class="box">
+
+  <h2>📝 Đăng ký tài khoản</h2>
+
+  <form action="/register" method="POST">
+
+    <input type="text" name="username" placeholder="Tên đăng nhập" required />
+    <input type="password" name="password" placeholder="Mật khẩu" required />
+
+    <select name="role">
+      <option value="user">Người dùng</option>
+      <option value="admin">Quản trị viên</option>
+    </select>
+
+    <button>Đăng ký</button>
+  </form>
+
+  <div class="bottom">
+    Đã có tài khoản? <a href="/login">Đăng nhập</a>
+  </div>
+
+</div>
+
+</body>
+</html>

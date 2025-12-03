@@ -1,189 +1,197 @@
-// import express from "express";
-// import dotenv from "dotenv";
-// import pool from "./db.js";
-// import path from "path";
-
-// dotenv.config();
-// const app = express();
-// const __dirname = path.resolve();
-
-// app.use(express.urlencoded({ extended: true }));
-// app.set("view engine", "ejs");
-// app.set("views", path.join(__dirname, "views"));
-
-
-// // 🔍 DEBUG — kiểm tra DB
-// app.get("/debug", async (req, res) => {
-//   try {
-//     const [rows] = await pool.query("SHOW TABLES");
-//     res.json(rows);
-//   } catch (err) {
-//     res.send(err);
-//   }
-// });
-
-
-// app.get("/", (req, res) => {
-//   res.redirect("/products");
-// });
-
-// // Trang thêm sản phẩm (GET)
-// app.get("/add", (req, res) => {
-//   res.render("index", {
-//     success: req.query.success,
-//     error: req.query.error
-//   });
-// });
-
-// // Thêm sản phẩm
-// app.post("/add", async (req, res) => {
-//   try {
-//     const { name, price } = req.body;
-//     await pool.query(
-//       "INSERT INTO products (name, price) VALUES (?, ?)",
-//       [name, price]
-//     );
-//     res.redirect("/products?success=1");
-//   } catch (err) {
-//     console.error("❌ Lỗi thêm:", err);
-//     res.redirect("/?error=1");
-//   }
-// });
-
-
-// // Danh sách
-// app.get("/products", async (req, res) => {
-//   try {
-//     const [rows] = await pool.query("SELECT * FROM products ORDER BY id ASC");
-//     res.render("products", { products: rows, success: req.query.success });
-//   } catch (err) {
-//     console.error("❌ Lỗi load:", err);
-//     res.render("products", { products: [], success: 0 });
-//   }
-// });
-
-
-// // Xóa
-// app.post("/delete/:id", async (req, res) => {
-//   try {
-//     await pool.query("DELETE FROM products WHERE id = ?", [req.params.id]);
-
-//     const [[{ total }]] = await pool.query(
-//       "SELECT COUNT(*) AS total FROM products"
-//     );
-
-//     if (total === 0) {
-//       await pool.query("ALTER TABLE products AUTO_INCREMENT = 1");
-//     }
-
-//     res.redirect("/products?success=1");
-//   } catch (err) {
-//     res.redirect("/products?error=1");
-//   }
-// });
-
-
-// // Form sửa
-// app.get("/edit/:id", async (req, res) => {
-//   try {
-//     const [rows] = await pool.query(
-//       "SELECT * FROM products WHERE id = ?",
-//       [req.params.id]
-//     );
-
-//     if (rows.length === 0) return res.send("❌ Không có!");
-
-//     res.render("edit", { product: rows[0] });
-//   } catch (err) {
-//     res.send("❌ Lỗi!");
-//   }
-// });
-
-
-// // Cập nhật
-// app.post("/edit/:id", async (req, res) => {
-//   try {
-//     const { name, price } = req.body;
-
-//     await pool.query(
-//       "UPDATE products SET name=?, price=? WHERE id=?",
-//       [name, price, req.params.id]
-//     );
-
-//     res.redirect("/products?success=1");
-//   } catch (err) {
-//     res.send("❌ Lỗi cập nhật!");
-//   }
-// });
-
-
-// // Tìm kiếm
-// app.get("/search", async (req, res) => {
-//   if (!req.query.keyword)
-//     return res.render("search", { products: [], searched: false });
-
-//   try {
-//     const [rows] = await pool.query(
-//       "SELECT * FROM products WHERE name LIKE ?",
-//       [`%${req.query.keyword}%`]
-//     );
-
-//     res.render("search", { products: rows, searched: true });
-//   } catch (err) {
-//     res.send("❌ Lỗi tìm kiếm!");
-//   }
-// });
-
-
-// // Server
-// const PORT = process.env.PORT || 8080;
-// app.listen(PORT, "0.0.0.0", () => {
-//   console.log(`🚀 Server chạy tại ${PORT}`);
-// });
-
 import express from "express";
 import dotenv from "dotenv";
 import pool from "./db.js";   // pg pool
 import path from "path";
+import cookieParser from "cookie-parser";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 dotenv.config();
 const app = express();
 const __dirname = path.resolve();
 
+const SECRET = process.env.JWT_SECRET;
+
+// ===================== MIDDLEWARE =====================
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 
-// 🔍 DEBUG
-app.get("/debug", async (req, res) => {
+// ========================================================
+// 🔥 TỰ ĐỘNG TẠO BẢNG & ADMIN MẶC ĐỊNH KHI CHẠY SERVER
+// ========================================================
+async function initDatabase() {
   try {
-    const result = await pool.query(
-      "SELECT table_name FROM information_schema.tables WHERE table_schema='public'"
+    console.log("🔄 Kiểm tra và tạo bảng nếu chưa có...");
+
+    // Tạo bảng users
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(50) UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        role VARCHAR(10) NOT NULL CHECK (role IN ('admin', 'user'))
+      );
+    `);
+
+    // Tạo bảng products
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS products (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        price NUMERIC(15,2) NOT NULL
+      );
+    `);
+
+    // Tạo admin mặc định nếu chưa có
+    const adminCheck = await pool.query(
+      "SELECT * FROM users WHERE username = 'admin'"
     );
-    res.json(result.rows);
+
+    if (adminCheck.rows.length === 0) {
+      const hash = await bcrypt.hash("admin123", 10);
+      await pool.query(
+        "INSERT INTO users (username, password, role) VALUES ($1, $2, 'admin')",
+        ["admin", hash]
+      );
+      console.log("👑 Đã tạo tài khoản admin mặc định (admin / admin123)");
+    } else {
+      console.log("👑 Admin đã tồn tại.");
+    }
+
+    console.log("✅ Database đã sẵn sàng!");
+
   } catch (err) {
-    res.send(err);
+    console.error("❌ Lỗi khởi tạo database:", err);
   }
+}
+
+
+// ========================================================
+// 🔐 Giải mã token → req.user
+// ========================================================
+app.use((req, res, next) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    req.user = null;
+    res.locals.user = null;
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET);
+    req.user = decoded;  
+    res.locals.user = decoded;
+  } catch (err) {
+    req.user = null;
+    res.locals.user = null;
+  }
+
+  next();
 });
 
 
-app.get("/", (req, res) => {
+// Middleware kiểm tra đăng nhập
+function verifyLogin(req, res, next) {
+  if (!req.user) return res.redirect("/login");
+  next();
+}
+
+// Middleware chỉ Admin
+function verifyAdmin(req, res, next) {
+  if (!req.user || req.user.role !== "admin")
+    return res.send("❌ Bạn không có quyền truy cập!");
+  next();
+}
+
+
+// ========================================================
+// ===================== AUTH ROUTES ======================
+// ========================================================
+
+// Form đăng ký
+app.get("/register", (req, res) => {
+  res.render("register");
+});
+
+// Xử lý đăng ký
+app.post("/register", async (req, res) => {
+  const { username, password, role } = req.body;
+
+  const hash = await bcrypt.hash(password, 10);
+
+  await pool.query(
+    "INSERT INTO users (username, password, role) VALUES ($1, $2, $3)",
+    [username, hash, role || "user"]
+  );
+
+  res.redirect("/login");
+});
+
+
+// Form đăng nhập
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
+// Xử lý đăng nhập
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+
+  const result = await pool.query(
+    "SELECT * FROM users WHERE username=$1",
+    [username]
+  );
+
+  if (result.rows.length === 0)
+    return res.send("❌ Sai tài khoản");
+
+  const user = result.rows[0];
+
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) return res.send("❌ Sai mật khẩu");
+
+  const token = jwt.sign(
+    { id: user.id, username: user.username, role: user.role },
+    SECRET,
+    { expiresIn: "1d" }
+  );
+
+  res.cookie("token", token, { httpOnly: true });
   res.redirect("/products");
 });
 
 
-// Form thêm sản phẩm
-app.get("/add", (req, res) => {
+// Đăng xuất
+app.get("/logout", (req, res) => {
+  res.clearCookie("token");
+  res.redirect("/login");
+});
+
+
+// ========================================================
+// ===================== SẢN PHẨM =========================
+// ========================================================
+
+// Trang chủ
+app.get("/", (req, res) => {
+  res.redirect("/products");
+});
+
+// Form thêm sản phẩm (admin)
+app.get("/add", verifyLogin, verifyAdmin, (req, res) => {
   res.render("index", {
     success: req.query.success,
     error: req.query.error
   });
 });
 
-
 // Thêm sản phẩm
-app.post("/add", async (req, res) => {
+app.post("/add", verifyLogin, verifyAdmin, async (req, res) => {
   try {
     const { name, price } = req.body;
 
@@ -199,11 +207,11 @@ app.post("/add", async (req, res) => {
   }
 });
 
-
-// Danh sách
-app.get("/products", async (req, res) => {
+// Danh sách sản phẩm (ai cũng xem được)
+app.get("/products", verifyLogin, async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM products ORDER BY id ASC");
+
     res.render("products", {
       products: result.rows,
       success: req.query.success
@@ -215,9 +223,8 @@ app.get("/products", async (req, res) => {
   }
 });
 
-
-// Xóa sản phẩm
-app.post("/delete/:id", async (req, res) => {
+// Xóa sản phẩm (admin)
+app.post("/delete/:id", verifyLogin, verifyAdmin, async (req, res) => {
   try {
     await pool.query("DELETE FROM products WHERE id=$1", [req.params.id]);
     res.redirect("/products?success=1");
@@ -228,9 +235,8 @@ app.post("/delete/:id", async (req, res) => {
   }
 });
 
-
-// Form sửa
-app.get("/edit/:id", async (req, res) => {
+// Form sửa sản phẩm (admin)
+app.get("/edit/:id", verifyLogin, verifyAdmin, async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT * FROM products WHERE id=$1",
@@ -247,9 +253,8 @@ app.get("/edit/:id", async (req, res) => {
   }
 });
 
-
 // Cập nhật sản phẩm
-app.post("/edit/:id", async (req, res) => {
+app.post("/edit/:id", verifyLogin, verifyAdmin, async (req, res) => {
   try {
     const { name, price } = req.body;
 
@@ -265,9 +270,8 @@ app.post("/edit/:id", async (req, res) => {
   }
 });
 
-
-// Tìm kiếm
-app.get("/search", async (req, res) => {
+// Tìm kiếm (user + admin)
+app.get("/search", verifyLogin, async (req, res) => {
   if (!req.query.keyword)
     return res.render("search", { products: [], searched: false });
 
@@ -288,8 +292,13 @@ app.get("/search", async (req, res) => {
 });
 
 
-// Server
+// ========================================================
+// ===================== START SERVER =====================
+// ========================================================
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Server chạy tại ${PORT}`);
+
+initDatabase().then(() => {
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🚀 Server chạy tại ${PORT}`);
+  });
 });

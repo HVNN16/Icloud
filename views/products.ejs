@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <title>Dashboard - Quản lý sản phẩm học tập</title>
+  <title>Nhóm 4 -Dashboard - Quản lý sản phẩm học tập</title>
 
   <style>
     body {
@@ -11,56 +11,80 @@
       background: #eef1f4;
     }
 
-    /* NAVBAR */
-    .navbar {
-      width: 100%;
-      height: 60px;
-      background: linear-gradient(135deg, #28a745, #2d7c4b);
-      color: white;
-      display: flex;
-      align-items: center;
-      padding: 0 20px;
-      justify-content: space-between;
-      position: fixed;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
+    /* ================= NAVBAR ================= */
+.navbar {
+  width: 100%;
+  height: 65px;
+  background: linear-gradient(135deg, #28a745, #2d7c4b);
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;       /* Giảm padding để lấy thêm không gian */
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  box-sizing: border-box;
+}
 
-    .navbar .logo {
-      display: flex;
-      align-items: center;
-      font-size: 22px;
-      font-weight: bold;
-      gap: 10px;
-    }
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  gap: 10px;
+}
 
-    .navbar img {
-      width: 32px;
-      height: 32px;
-    }
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 45%;         /* Giới hạn không cho chiếm hết ngang */
+  flex-shrink: 1;         /* Cho phép co lại */
+  overflow: hidden;       /* Ngăn tràn */
+}
 
-    .navbar-links a {
-      margin-left: 20px;
-      color: white;
-      text-decoration: none;
-      font-size: 16px;
-      transition: 0.3s;
-    }
+.user-info {
+  background: rgba(255,255,255,0.20);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  white-space: nowrap;         /* Không xuống dòng */
+  overflow: hidden;
+  text-overflow: ellipsis;     /* Hiện "..." nếu dài */
+  max-width: 70%;              /* Chiếm tối đa 70% vùng phải */
+}
 
-    .navbar-links a:hover {
-      opacity: 0.8;
-    }
+.logout-btn {
+  background: #dc3545;
+  color: white !important;
+  padding: 7px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 13px;
+  white-space: nowrap;         /* Không xuống dòng */
+  flex-shrink: 0;              /* Không bị ép co */
+  transition: 0.25s;
+}
 
-    /* SIDEBAR */
+.logout-btn:hover {
+  background: #b02a37;
+  transform: translateY(-1px);
+}
+
+
+    /* ================= SIDEBAR ================= */
     .sidebar {
       width: 240px;
       background: white;
       position: fixed;
-      top: 60px;
+      top: 65px;
       bottom: 0;
       left: 0;
-      padding-top: 30px;
+      padding-top: 25px;
       border-right: 1px solid #ddd;
       box-shadow: 3px 0 12px rgba(0,0,0,0.08);
     }
@@ -73,13 +97,13 @@
       text-decoration: none;
       color: #333;
       font-size: 16px;
-      transition: 0.3s;
+      transition: 0.25s;
       border-left: 4px solid transparent;
     }
 
     .sidebar img {
       width: 22px;
-      opacity: 0.8;
+      opacity: 0.85;
     }
 
     .sidebar a:hover {
@@ -88,8 +112,15 @@
       border-left: 4px solid #28a745;
       font-weight: bold;
     }
+    .navbar img {
+  width: 32px !important;
+  height: 32px !important;
+  object-fit: contain;
+  display: block;
+}
 
-    /* CONTENT */
+
+    /* ================= CONTENT ================= */
     .content {
       margin-left: 260px;
       padding: 100px 40px;
@@ -97,7 +128,7 @@
 
     .card {
       background: white;
-      padding: 30px;
+      padding: 32px;
       border-radius: 14px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.1);
       animation: fadeIn 0.4s ease;
@@ -129,13 +160,11 @@
       transition: 0.3s;
       font-size: 16px;
     }
-
     .btn-add:hover {
       background: #1e7a33;
       box-shadow: 0 4px 12px rgba(40,167,69,0.3);
     }
 
-    /* TABLE */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -164,15 +193,14 @@
     .btn {
       padding: 8px 12px;
       border-radius: 6px;
-      border: none;
       cursor: pointer;
       font-size: 14px;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: 0.3s;
       text-decoration: none;
       color: white !important;
+      transition: 0.25s;
     }
 
     .edit {
@@ -193,48 +221,67 @@
       from { opacity: 0; transform: translateY(15px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-  </style>
 
+  </style>
 </head>
+
 <body>
 
-  <!-- NAVBAR -->
+  <!-- ================= NAVBAR ================= -->
   <div class="navbar">
     <div class="logo">
       <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" />
       Nhóm 4 - ICLOUD - Thiên Đường Cho Học Tập
     </div>
+
+    <div class="navbar-right">
+      <% if (!user) { %>
+        <a href="/login" class="nav-btn">🔑 Đăng nhập</a>
+        <a href="/register" class="nav-btn">📝 Đăng ký</a>
+      <% } else { %>
+        <span class="user-info">
+          👋 Xin chào, <b><%= user.username %></b> (<%= user.role %>)
+        </span>
+        <a href="/logout" class="logout-btn">🚪 Đăng xuất</a>
+      <% } %>
+    </div>
   </div>
 
-  <!-- SIDEBAR -->
+
+  <!-- ================= SIDEBAR ================= -->
   <div class="sidebar">
     <a href="/products">
       <img src="https://cdn-icons-png.flaticon.com/512/992/992651.png" />
       Danh sách sản phẩm
     </a>
+
+    <% if (user && user.role === "admin") { %>
     <a href="/add">
       <img src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png" />
       Thêm sản phẩm
     </a>
+    <% } %>
+
     <a href="/search">
       <img src="https://cdn-icons-png.flaticon.com/512/622/622669.png" />
       Tìm kiếm sản phẩm
     </a>
   </div>
 
-  <!-- MAIN CONTENT -->
+  <!-- ================= CONTENT ================= -->
   <div class="content">
     <div class="card">
 
       <h2 class="title">📋 Danh sách sản phẩm</h2>
 
+      <% if (user && user.role === "admin") { %>
       <a href="/add" class="btn-add">
         <img src="https://cdn-icons-png.flaticon.com/512/992/992651.png" width="18" />
         Thêm sản phẩm
       </a>
+      <% } %>
 
       <% if (products.length > 0) { %>
-
       <table>
         <tr>
           <th>ID</th>
@@ -249,14 +296,19 @@
           <td><%= p.name %></td>
           <td><%= Number(p.price).toLocaleString("vi-VN") %></td>
           <td>
-            <a class="btn edit" href="/edit/<%= p.id %>">
-              ✏️ Sửa
-            </a>
 
-            <form action="/delete/<%= p.id %>" method="POST" style="display:inline"
+            <% if (user && user.role === "admin") { %>
+            <a class="btn edit" href="/edit/<%= p.id %>">✏️ Sửa</a>
+
+            <form action="/delete/<%= p.id %>" method="POST"
+              style="display:inline"
               onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')">
               <button class="btn delete">🗑️ Xóa</button>
             </form>
+            <% } else { %>
+            —
+            <% } %>
+
           </td>
         </tr>
         <% }) %>
@@ -264,20 +316,20 @@
       </table>
 
       <% } else { %>
-
       <p style="text-align:center; color:#666;">⚠️ Chưa có sản phẩm nào.</p>
-
       <% } %>
 
     </div>
   </div>
-<!-- FOOTER -->
+
+
+<!-- ================= FOOTER ================= -->
 <footer style="
   margin-left: 260px;
   background: linear-gradient(135deg, #2d7c4b, #28a745);
   color: white;
   text-align: center;
-  padding: 18px 10px;
+  padding: 22px 10px;
   font-size: 15px;
   font-weight: 500;
   margin-top: 40px;
@@ -286,13 +338,13 @@
   box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
   line-height: 1.6;
 ">
-  © 2025 - Design by <b>Nhóm 4 - iCloud</b> 💚  
+  © 2025 - Thiết kế bởi <b>Nhóm 4 - iCloud</b> 💚  
   <div style="margin-top: 6px; font-size: 14px;">
-    👥 Thành viên: 
+    👥 Thành viên gồm: 
     <b>Huỳnh Văn Nghĩa</b> • 
     <b>Nguyễn Thị Minh Nguyệt</b> • 
-    <b>Trần Thị Thúy Vy</b> • 
-    <b>Phạm Tấn Tài</b>
+    <b>Thái Nguyễn Văn Ngọc</b> • 
+    <b>Trần Duy Nhất</b>
   </div>
 </footer>
 

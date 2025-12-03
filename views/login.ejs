@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Đăng nhập</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial;
+    background: #e8f5e9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .login-box {
+    width: 380px;
+    background: white;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+  h2 {
+    text-align: center;
+    color: #2d7c4b;
+    margin-bottom: 20px;
+  }
+  input {
+    width: 90%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+  }
+  button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #1e7a33;
+  }
+  .bottom {
+    margin-top: 15px;
+    text-align: center;
+  }
+  a {
+    color: #2a7f3c;
+    text-decoration: none;
+    font-weight: bold;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
+  <h2>🔐 Đăng nhập</h2>
+
+  <form method="POST" action="/login">
+    <input type="text" name="username" placeholder="Tài khoản" required />
+    <input type="password" name="password" placeholder="Mật khẩu" required />
+
+    <button type="submit">Đăng nhập</button>
+  </form>
+
+  <div class="bottom">
+    Chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
+  </div>
+</div>
+
+</body>
+</html>
